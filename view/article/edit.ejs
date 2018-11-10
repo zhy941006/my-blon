@@ -1,0 +1,42 @@
+<%- include("../layout/header.ejs")%>
+
+<link rel="stylesheet" href="/node_modules/mditor/dist/css/mditor.min.css">
+<script src="/node_modules/mditor/dist/js/mditor.min.js"></script>
+    <div class="container">
+        <h1>编辑文章页面</h1>
+        <hr>
+        <form id="form">
+            <div class="form-group">
+                <input type="hidden" name="authorId" value="<%= user.id%>">
+                <label>文章标题</label>
+                <input type="text" name="title" class="form-control" required value="<%= article.title%>">
+            </div>
+      
+            <div class="form-group">
+                <label>文章内容</label>
+                <textarea type="text" name="content" class="form-control" id="editor"><%= article.content%></textarea>
+            </div>
+      
+            <div class="form-group">
+                <input type="submit" value="确认编辑" class="btn btn-primary">
+            </div>
+        </form>
+    </div>
+    <script>
+        $(function(){
+            var mditor =  Mditor.fromTextarea(document.getElementById('editor'));
+            $("#form").on("submit",function(e){
+                e.preventDefault()
+                $.ajax({
+                    type:"post",
+                    url:"/article/edit",
+                    data:$("#form").serialize(),
+                    success:function(result){
+                       if(result.status!==200) return alert("修改文章失败")
+                       location.href="/article/info/<%= article.id%>"
+                    }
+                })
+            })
+        })
+    </script>
+<%- include("../layout/footer.ejs")%>
